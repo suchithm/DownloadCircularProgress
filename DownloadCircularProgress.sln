@@ -1,0 +1,19 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DownloadCircularProgress", "DownloadCircularProgress\DownloadCircularProgress.csproj", "{917A412A-5B1F-41B6-8512-5645B852A64C}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "DownloadCircularProgress.Shared", "DownloadCircularProgress.Shared\DownloadCircularProgress.Shared.shproj", "{38A12539-25AC-468E-A4F7-566299A5DAD7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{917A412A-5B1F-41B6-8512-5645B852A64C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{917A412A-5B1F-41B6-8512-5645B852A64C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{917A412A-5B1F-41B6-8512-5645B852A64C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{917A412A-5B1F-41B6-8512-5645B852A64C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
