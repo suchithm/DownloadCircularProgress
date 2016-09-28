@@ -10,10 +10,10 @@ namespace DownloadCircularProgress.Shared
 		public static readonly int BufferSize = 4096;
 
 		public static async Task<int> CreateDownloadTask(string urlToDownload, IProgress<DownloadProgressClass> progessReporter)
-		{
+		{ 
 			int receivedBytes = 0;
 			int totalBytes = 0;
-			WebClient client = new WebClient();
+			var client = new WebClient();
 
 			using (var stream = await client.OpenReadTaskAsync(urlToDownload))
 			{
@@ -32,7 +32,7 @@ namespace DownloadCircularProgress.Shared
 					receivedBytes += bytesRead;
 					if (progessReporter != null)
 					{
-						DownloadProgressClass args = new DownloadProgressClass(urlToDownload, receivedBytes, totalBytes);
+						var args = new DownloadProgressClass(urlToDownload, receivedBytes, totalBytes);
 						progessReporter.Report(args);
 					}
 				}

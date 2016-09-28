@@ -28,10 +28,9 @@ namespace DownloadCircularProgress
 		}
 		async void StartDownloadHandler(object sender, System.EventArgs e)
 		{ 
-			//initCircularProgressBar.setProgress(secondUpdate);
-
+			//initCircularProgressBar.setProgress(secondUpdate); 
 			_progressBar.Progress = 0;
-			Progress<DownloadProgressClass> progressReporter = new Progress<DownloadProgressClass>();
+			var progressReporter = new Progress<DownloadProgressClass>(); 
 			progressReporter.ProgressChanged += (s, args) => initCircularProgressBar.setProgress((int)(100 * args.PercentComplete));
 			progressReporter.ProgressChanged += (s, args) => _progressBar.Progress=((int)(100 * args.PercentComplete));
 			Task<int> downloadTask =  DownloadHelperClass.CreateDownloadTask(DownloadHelperClass.ImageToDownload, progressReporter);
@@ -44,13 +43,13 @@ namespace DownloadCircularProgress
 			initCircularProgressBar.setMax(100);
 			initCircularProgressBar.ClearAnimation(); 
 			initCircularProgressBar.setTextSize (24);
-			initCircularProgressBar.setTextColor (Color.Rgb(255,215,0));
+			initCircularProgressBar.setTextColor (Color.ParseColor ("#fff69212"));
 			initCircularProgressBar.setTextTypeFaceBold ();
 			initCircularProgressBar.setProgress (0);
 
 			initCircularProgressBar.getCircularProgressBar().setCircleWidth(20);
 			initCircularProgressBar.getCircularProgressBar().setMax(100);
-			initCircularProgressBar.getCircularProgressBar().setPrimaryColor(Color.Rgb(255,215,0));
+			initCircularProgressBar.getCircularProgressBar ().setPrimaryColor (Color.ParseColor ("#fff69212"));// Color.Rgb(255,215,0));
 			initCircularProgressBar.getCircularProgressBar().setBackgroundColor(Color.White);  
 		}
 
