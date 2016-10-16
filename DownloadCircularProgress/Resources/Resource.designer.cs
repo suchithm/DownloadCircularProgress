@@ -798,6 +798,12 @@ namespace DownloadCircularProgress
 			// aapt resource value: 0x7f020056
 			public const int abc_textfield_searchview_right_holo_light = 2130837590;
 			
+			// aapt resource value: 0x7f020057
+			public const int round_corner_white = 2130837591;
+			
+			// aapt resource value: 0x7f020058
+			public const int roundedCorner = 2130837592;
+			
 			static Drawable()
 			{
 				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
@@ -853,6 +859,9 @@ namespace DownloadCircularProgress
 			// aapt resource value: 0x7f0a0016
 			public const int beginning = 2131361814;
 			
+			// aapt resource value: 0x7f0a003d
+			public const int btnDownload = 2131361853;
+			
 			// aapt resource value: 0x7f0a002d
 			public const int checkbox = 2131361837;
 			
@@ -907,9 +916,6 @@ namespace DownloadCircularProgress
 			// aapt resource value: 0x7f0a0018
 			public const int middle = 2131361816;
 			
-			// aapt resource value: 0x7f0a003c
-			public const int myButton = 2131361852;
-			
 			// aapt resource value: 0x7f0a0012
 			public const int never = 2131361810;
 			
@@ -918,9 +924,6 @@ namespace DownloadCircularProgress
 			
 			// aapt resource value: 0x7f0a0007
 			public const int normal = 2131361799;
-			
-			// aapt resource value: 0x7f0a003d
-			public const int progressBar1 = 2131361853;
 			
 			// aapt resource value: 0x7f0a0004
 			public const int progress_circular = 2131361796;
@@ -931,8 +934,8 @@ namespace DownloadCircularProgress
 			// aapt resource value: 0x7f0a002f
 			public const int radio = 2131361839;
 			
-			// aapt resource value: 0x7f0a003e
-			public const int rate_progress_bar = 2131361854;
+			// aapt resource value: 0x7f0a003c
+			public const int rate_progress_bar = 2131361852;
 			
 			// aapt resource value: 0x7f0a0032
 			public const int search_badge = 2131361842;
@@ -1179,7 +1182,7 @@ namespace DownloadCircularProgress
 			public const int app_name = 2131427342;
 			
 			// aapt resource value: 0x7f0b000d
-			public const int hello = 2131427341;
+			public const int download = 2131427341;
 			
 			static String()
 			{

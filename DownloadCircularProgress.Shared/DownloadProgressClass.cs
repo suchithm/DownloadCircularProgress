@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿
 namespace DownloadCircularProgress.Shared
 {
 	public class DownloadProgressClass

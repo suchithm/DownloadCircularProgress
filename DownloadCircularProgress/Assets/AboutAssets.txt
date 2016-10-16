@@ -17,3 +17,361 @@ public class ReadAsset : Activity
 Additionally, some Android functions will automatically load asset files:
 
 Typeface tf = Typeface.CreateFromAsset (Context.Assets, "fonts/samplefont.ttf");
+
+=======================================
+
+Download circualr progress bar custom control example in xamarin android
+
+Brief: Download percentage indicator, custom control example in xamarin android.
+
+In my previous post explained Circular progress bar example using xamarin android[http://www.appliedcodelog.com/2016/09/circular-progress-bar-example-using.html]
+Description : In this examaple shown the file download progress in circular progress bar with percentage status text.
+This implementation is not based on the selector xml file.
+
+Steps:
+Edit the layout file as follows
+
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffdcdcdc"&gt;
+    &lt;LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:background="@drawable/roundedCorner"
+        android:layout_centerInParent="true"&gt;
+        &lt;LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:background="@drawable/round_corner_white"&gt;
+            &lt;DownloadCircularProgress.InitCircularProgressClass
+                android:id="@+id/rate_progress_bar"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_margin="10dp" /&gt;
+            &lt;Button
+                android:id="@+id/btnDownload"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_margin="5dp"
+                android:text="@string/download" /&gt;
+        &lt;/LinearLayout&gt;
+    &lt;/LinearLayout&gt;
+&lt;/RelativeLayout&gt;
+
+Step 2: Check out the code for Activity and other supporting class as follows,
+//MainActivity.cs
+using Android.App;
+using Android.Widget;
+using Android.OS; 
+using DownloadCircularProgress.Shared;
+using System;
+using System.Threading.Tasks;
+using Android.Graphics;
+
+namespace DownloadCircularProgress
+{
+	 
+	[Activity (Label = "DownloadCircularProgress", MainLauncher = true, Icon = "@mipmap/icon")]
+	public class MainActivity : Activity
+	{  
+		InitCircularProgressClass initCircularProgressBar;   
+		protected override void OnCreate (Bundle savedInstanceState)
+		{
+			base.OnCreate (savedInstanceState);
+			Window.RequestFeature (Android.Views.WindowFeatures.NoTitle);
+			SetContentView (Resource.Layout.Main);
+ 
+			Button button = FindViewById&lt;Button&gt; (Resource.Id.btnDownload); 
+			fnInitializeCircleBar();
+			button.Click += StartDownloadHandler;
+ 
+		}
+		async void StartDownloadHandler(object sender, System.EventArgs e)
+		{ 
+			//initCircularProgressBar.setProgress(secondUpdate);  
+			var progressReporter = new Progress&lt;DownloadProgressClass&gt;(); 
+			progressReporter.ProgressChanged += (s, args) =&gt; initCircularProgressBar.setProgress((int)(100 * args.PercentComplete)); 
+			Task&lt;int&gt; downloadTask =  DownloadHelperClass.CreateDownloadTask(DownloadHelperClass.ImageToDownload, progressReporter);
+			int bytesDownloaded = await downloadTask;
+			System.Diagnostics.Debug.WriteLine("Downloaded {0} bytes.", bytesDownloaded);
+		}
+		void fnInitializeCircleBar()
+		{
+			initCircularProgressBar = (InitCircularProgressClass)FindViewById(Resource.Id.rate_progress_bar);
+			initCircularProgressBar.setMax(100);
+			initCircularProgressBar.ClearAnimation(); 
+			initCircularProgressBar.setTextSize (18);
+			initCircularProgressBar.setTextColor (Color.ParseColor ("#fff69212"));
+			initCircularProgressBar.setTextTypeFaceBold ();
+			initCircularProgressBar.setProgress (0);
+
+			initCircularProgressBar.getCircularProgressBar().setCircleWidth(14);
+			initCircularProgressBar.getCircularProgressBar().setMax(100);
+			initCircularProgressBar.getCircularProgressBar ().setPrimaryColor (Color.ParseColor ("#fff69212"));// Color.Rgb(255,215,0));
+			initCircularProgressBar.getCircularProgressBar().setBackgroundColor(Color.White);  
+		} 
+	}
+}
+
+Step 3: Custom control creation code,
+CircularProgressBarClass.cs
+
+using System;
+using Android.Views;
+using Android.Graphics;
+using Android.Content;
+using Android.Util;
+
+namespace DownloadCircularProgress
+{
+	public class CircularProgressBarClass : View
+	{ 	
+	  int mDuration = 100;
+	  int mProgress = 30;
+	  Paint mPaint = new Paint();
+	  RectF mRectF = new RectF();
+	  Color mBackgroundColor = Color.White;
+	  Color mPrimaryColor = Color.Yellow; 
+	  float mStrokeWidth = 10F;
+
+	  public IOnProgressChangeListener mOnChangeListener;
+
+	   public interface IOnProgressChangeListener {
+			
+			void onChange(int duration, int progress, float rate);
+		}
+
+		public void setOnProgressChangeListener(IOnProgressChangeListener l)
+		{
+			mOnChangeListener = l;
+		}
+		public CircularProgressBarClass(Context context) :base(context) {
+		}
+
+		public CircularProgressBarClass(Context context, IAttributeSet attrs) : base(context,attrs) {
+		}
+
+		public void setMax( int max ) {
+			if( max &lt; 0 ) {
+				max = 0;
+			}
+			mDuration = max;
+		}
+
+		public int getMax() {
+			return mDuration;
+		}
+
+		public void setProgress( int progress ) {
+			if( progress &gt; mDuration ) {
+				progress = mDuration;
+			}
+			mProgress = progress;
+			if( mOnChangeListener != null ) {
+				mOnChangeListener.onChange(mDuration, progress, getRateOfProgress());
+			}
+			Invalidate();
+		}
+
+		public int getProgress() {
+			return mProgress;
+		}
+
+		public void setBackgroundColor( Color color ) {
+			mBackgroundColor = color;
+		}
+
+		public void setPrimaryColor( Color color ) {
+			mPrimaryColor = color;
+		}
+
+		public void setCircleWidth(float width) {
+			mStrokeWidth = width;
+		}
+
+		protected override void OnDraw (Canvas canvas)
+		{
+			base.OnDraw (canvas);
+			int halfWidth = Width / 2;
+			int halfHeight = Height/2;
+			int radius = halfWidth &lt; halfHeight ? halfWidth : halfHeight;
+			float halfStrokeWidth = mStrokeWidth / 2;
+
+			mPaint.Color=mBackgroundColor;
+			mPaint.Dither=true;
+			mPaint.Flags = PaintFlags.AntiAlias; 
+			mPaint.AntiAlias=true;
+			mPaint.StrokeWidth=mStrokeWidth;
+			mPaint.SetStyle(Paint.Style.Stroke);
+			canvas.DrawCircle(halfWidth, halfHeight, radius - halfStrokeWidth, mPaint);
+
+			mPaint.Color=mPrimaryColor;
+			mRectF.Top = halfHeight - radius + halfStrokeWidth;
+			mRectF.Bottom = halfHeight + radius - halfStrokeWidth;
+			mRectF.Left = halfWidth - radius + halfStrokeWidth;
+			mRectF.Right = halfWidth + radius - halfStrokeWidth;
+			canvas.DrawArc(mRectF, -90, getRateOfProgress() * 360, false, mPaint);
+			canvas.Save();
+		} 
+
+		private float getRateOfProgress() {
+			return (float)mProgress / mDuration;
+		}
+	}
+}
+
+Step 4: Initialization code for circular progress bar control
+InitCircularProgressClass.cs
+using Android.Widget;
+using Android.Content;
+using Android.Views;
+using Android.Graphics;
+using Android.Util;
+
+namespace DownloadCircularProgress
+{
+	public class InitCircularProgressClass :FrameLayout,CircularProgressBarClass.IOnProgressChangeListener
+	{
+		CircularProgressBarClass mCircularProgressBar;
+		TextView mRateText; 
+		int maxDuration;
+		public InitCircularProgressClass(Context context):base(context) { 
+			init();
+		}
+		public InitCircularProgressClass(Context context, IAttributeSet attrs) :base(context,attrs){ 
+			init();
+		}
+		void init() {
+			mCircularProgressBar = new CircularProgressBarClass( Context);
+			AddView(mCircularProgressBar);
+			var lp = new LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent);
+			lp.Gravity = GravityFlags.Center;
+			mCircularProgressBar.LayoutParameters=(lp);
+			mRateText = new TextView(Context);
+			AddView(mRateText);
+			mRateText.LayoutParameters=lp;
+			mRateText.Gravity=GravityFlags.Center;
+			mRateText.SetTextColor( Color.Black);
+			mRateText.SetTextSize( ComplexUnitType.Dip,10);
+			mCircularProgressBar.setOnProgressChangeListener(this);
+		}
+		public void setMax( int max ) {
+			mCircularProgressBar.setMax(max);
+			maxDuration = max;
+		}
+
+		public void setProgress(int progress) {
+			mCircularProgressBar.setProgress(progress);
+		}
+
+		public CircularProgressBarClass getCircularProgressBar() {
+			return mCircularProgressBar;
+		}
+
+		public void setTextSize(float size) {
+			mRateText.SetTextSize(ComplexUnitType.Dip,size);
+		}
+
+		public void setTextColor( Color color) {
+			mRateText.SetTextColor(color); 
+		} 
+
+		public void setTextTypeFaceBold()
+		{
+			mRateText.Typeface = Typeface.DefaultBold;
+		}
+			
+		public void onChange(int duration, int progress, float rate)
+		{ 
+			mRateText.Text=string.Format("{0}%", ( (int) (rate * maxDuration )).ToString());   
+		}
+ 
+	}
+}
+
+Step 5: As file download functionality is sharable accross the platform you can consider using in shared project.
+Add -&gt;New project-&gt;Cross-platform-&gt;Library-&gt;Shared Project.
+
+DownloadProgressClass.cs
+
+namespace DownloadCircularProgress.Shared
+{
+	public class DownloadProgressClass
+	{
+		public DownloadProgressClass(string fileName, int bytesReceived, int totalBytes)
+		{
+			Filename = fileName;
+			BytesReceived = bytesReceived;
+			TotalBytes = totalBytes;
+		}
+
+		public int TotalBytes { get; private set; }
+
+		public int BytesReceived { get; private set; }
+
+		public float PercentComplete { get { return (float)BytesReceived / TotalBytes; } }
+
+		public string Filename { get; private set; }
+
+		public bool IsFinished { get { return BytesReceived == TotalBytes; } }
+	}
+}
+
+Step 4: Add new class with download helper code.
+
+using System;
+using System.Threading.Tasks;
+using System.Net;
+
+namespace DownloadCircularProgress.Shared
+{ 
+	public class DownloadHelperClass
+	{
+		public static readonly string ImageToDownload = "http://eoimages.gsfc.nasa.gov/images/imagerecords/74000/74393/world.topo.200407.3x5400x2700.jpg";
+		public static readonly int BufferSize = 4096;
+
+		public static async Task&lt;int&gt; CreateDownloadTask(string urlToDownload, IProgress&lt;DownloadProgressClass&gt; progessReporter)
+		{ 
+			int receivedBytes = 0;
+			int totalBytes = 0;
+			var client = new WebClient();
+
+			using (var stream = await client.OpenReadTaskAsync(urlToDownload))
+			{
+				byte[] buffer = new byte[BufferSize];
+				totalBytes = Int32.Parse(client.ResponseHeaders[HttpResponseHeader.ContentLength]);
+
+				for (;;)
+				{
+					int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+					if (bytesRead == 0)
+					{
+						await Task.Yield();
+						break;
+					}
+
+					receivedBytes += bytesRead;
+					if (progessReporter != null)
+					{
+						var args = new DownloadProgressClass(urlToDownload, receivedBytes, totalBytes);
+						progessReporter.Report(args);
+					}
+				}
+			}
+			return receivedBytes;
+		}
+
+	}
+}
+
+
+Conclusion : This is the best suitable example if you are looking for implementation of circular progress
+ dynamically from code behind file without using xml selectors.
+
+ 

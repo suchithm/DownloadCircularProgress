@@ -1,11 +1,8 @@
-﻿using System;
-using Android.Widget;
+﻿using Android.Widget;
 using Android.Content;
 using Android.Views;
 using Android.Graphics;
 using Android.Util;
-using Android.App;
-
 
 namespace DownloadCircularProgress
 {
